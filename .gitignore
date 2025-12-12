@@ -1,0 +1,4 @@
+build
+cmake-*
+CMakeUserPresets.json
+custom-cmake-build-debug

@@ -1,0 +1,17 @@
+# https://jorisroovers.com/gitlint/configuration/
+# https://arringo-ltd.atlassian.net/wiki/spaces/AR/pages/520585217/Git+Guidelines
+
+[general]
+ignore=title-trailing-punctuation, body-is-missing
+verbosity=2
+ignore-merge-commits=true
+
+[title-max-length]
+line-length=50
+
+[title-match-regex]
+# Commit message must start with a JIRA ticket ID and followed by a space
+regex=^[A-Z]+-[0-9]+\s
+
+[body-max-line-length]
+line-length=72
