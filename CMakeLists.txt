@@ -1,29 +1,64 @@
 cmake_minimum_required(VERSION 3.28.3)
-project(app VERSION 0.1.0 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+# -------------------------------------------------
+# Project
+# -------------------------------------------------
+project(
+  app
+  VERSION 0.1.0
+  DESCRIPTION "Application with core library"
+  LANGUAGES C CXX)
 
-option(ENABLE_TESTS "Enable unit testing" OFF)
-option(BUILD_DEBUG_MODE "Enable debug mode" OFF)
-# Define DEBUG_BUILD only if BUILD_DEBUG_MODE is TRUE
-add_compile_definitions(
-    "$<$<BOOL:${BUILD_DEBUG_MODE}>:DEBUG_BUILD>"
-)
+# -------------------------------------------------
+# Global C++ settings
+# -------------------------------------------------
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Using CMAKE_BUILD_TYPE for Single-Configuration Generators:
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-    message(STATUS "Building in Debug mode.")
-    # Add debug-specific settings or definitions
-    add_compile_definitions(DEBUG_MODE)
-elseif(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
-    message(STATUS "Building in Release mode.")
-    # Add release-specific settings or optimizations
-    add_compile_definitions(NDEBUG)
+# -------------------------------------------------
+# Options
+# -------------------------------------------------
+option(ENABLE_WARNINGS "Enable compiler warnings" ON)
+option(ENABLE_APP "Build application executable" ON)
+option(ENABLE_TESTS "Build unit tests" OFF)
+option(ENABLE_BENCHMARKS "Build benchmark targets" OFF)
+option(BUILD_DEBUG_MODE "Enable extra debug definitions" OFF)
+
+# -------------------------------------------------
+# CMake modules
+# -------------------------------------------------
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(CompilerDefinitions)
+include(CompilerWarnings)
+include(BuildInfo)
+include(FastBuild)
+
+print_global_build_info_once()
+
+# -------------------------------------------------
+# Global compile definitions
+# -------------------------------------------------
+if(BUILD_DEBUG_MODE)
+  add_compile_definitions(DEBUG_BUILD)
 endif()
 
-add_subdirectory(app)
+# -------------------------------------------------
+# Subprojects
+# -------------------------------------------------
+add_subdirectory(core)
+
+if(ENABLE_APP)
+  add_subdirectory(app)
+endif()
 
 if(ENABLE_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
+  include(CTest)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
+
+if(ENABLE_BENCHMARKS)
+  add_subdirectory(benchmarks)
 endif()

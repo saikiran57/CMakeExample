@@ -1,369 +1,214 @@
 {
-    "version": 7,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 28,
-        "patch": 3
+  "version": 7,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 3
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build",
+      "generator": "Ninja"
     },
-    "configurePresets": [
-        {
-            "name": "base",
-            "hidden": true,
-            "binaryDir": "${sourceDir}/build",
-            "generator": "Ninja"
-        },
-        {
-            "name": "base-debug",
-            "inherits": "base",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "DEBUG"
-            }
-        },
-        {
-            "name": "base-release",
-            "inherits": "base",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RELEASE"
-            }
-        },
-        {
-            "name": "base-relwithdebinfo",
-            "inherits": "base",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RELWITHDEBINFO"
-            }
-        },
-        {
-            "name": "analysis",
-            "displayName": "Release Build With Clang-Tidy",
-            "description": "Release build with clang-tidy using release configuration",
-            "inherits": "base-release",
-            "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-                "ENABLE_CLANG_TIDY": true
-            }
-        },
-        {
-            "name": "base-asan",
-            "inherits": "base",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "ASAN"
-            }
-        },
-        {
-            "name": "base-tsan",
-            "inherits": "base",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "TSAN"
-            }
-        },
-        {
-            "name": "tests-off",
-            "hidden": true,
-            "cacheVariables": {
-                "ENABLE_TESTS": "OFF"
-            }
-        },
-        {
-            "name": "tests-on",
-            "hidden": true,
-            "cacheVariables": {
-                "ENABLE_TESTS": "ON"
-            }
-        },
-        {
-            "name": "dev",
-            "inherits": [
-                "base-debug",
-                "tests-on"
-            ],
-            "displayName": "Development: DEBUG build with tests enabled",
-            "cacheVariables": {},
-            "binaryDir": "${sourceDir}/cmake-build-debug"
-        },
-        {
-            "name": "dev-coverage",
-            "inherits": [
-                "base-debug",
-                "tests-on"
-            ],
-            "displayName": "Development: DEBUG build with tests and code coverage enabled",
-            "cacheVariables": {
-                "TEST_LLVM_COVERAGE": "ON"
-            },
-            "binaryDir": "${sourceDir}/cmake-build-coverage"
-        },
-        {
-            "name": "release",
-            "inherits": [
-                "base-relwithdebinfo",
-                "tests-off"
-            ],
-            "displayName": "Release: RELWITHDEBINFO build without tests enabled",
-            "cacheVariables": {},
-            "binaryDir": "${sourceDir}/cmake-build-release"
-        },
-        {
-            "name": "asan",
-            "inherits": [
-                "base-asan",
-                "tests-on"
-            ],
-            "displayName": "AddressSanitizer: ASAN build with tests enabled",
-            "cacheVariables": {},
-            "binaryDir": "${sourceDir}/cmake-build-asan"
-        },
-        {
-            "name": "tsan",
-            "inherits": [
-                "base-tsan",
-                "tests-on"
-            ],
-            "displayName": "ThreadSanitizer: TSAN build with tests enabled",
-            "cacheVariables": {},
-            "binaryDir": "${sourceDir}/cmake-build-tsan"
-        },
-        {
-            "name": "benchmarks",
-            "inherits": [
-                "base-release",
-                "tests-on"
-            ],
-            "displayName": "Benchmarks: RELEASE build with benchmarks enabled",
-            "cacheVariables": {},
-            "binaryDir": "${sourceDir}/cmake-build-release"
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "dev",
-            "displayName": "Build app binary with debug info and tests enabled",
-            "configurePreset": "dev",
-            "targets": [
-                "app"
-            ],
-            "jobs": 8
-        },
-        {
-            "name": "unit-tests",
-            "displayName": "Build app unit tests",
-            "configurePreset": "dev",
-            "targets": [
-                "app_ut_tests"
-            ]
-        },
-        {
-            "name": "unit-tests-all",
-            "displayName": "Build all unit tests",
-            "configurePreset": "dev",
-            "targets": [
-                "gtests_dbms",
-                "gtests_libdaemon",
-                "gtests_libcommon"
-            ]
-        },
-        {
-            "name": "dev-coverage",
-            "displayName": "Build dbms unit tests with code coverage",
-            "configurePreset": "dev-coverage",
-            "targets": [
-                "gtests_dbms"
-            ]
-        },
-        {
-            "name": "dev-coverage-all",
-            "displayName": "Build all unit tests with code coverage",
-            "configurePreset": "dev-coverage",
-            "targets": [
-                "gtests_dbms",
-                "gtests_libdaemon",
-                "gtests_libcommon"
-            ]
-        },
-        {
-            "name": "release",
-            "displayName": "Build app binary without debug info",
-            "configurePreset": "release",
-            "targets": [
-                "app"
-            ]
-        },
-        {
-            "name": "asan",
-            "displayName": "Build dbms Address Sanitizer tests",
-            "configurePreset": "asan",
-            "targets": [
-                "gtests_dbms"
-            ]
-        },
-        {
-            "name": "asan-all",
-            "displayName": "Build all Address Sanitizer tests",
-            "configurePreset": "asan",
-            "targets": [
-                "gtests_dbms",
-                "gtests_libdaemon",
-                "gtests_libcommon"
-            ]
-        },
-        {
-            "name": "tsan",
-            "displayName": "Build dbms Thread Sanitizer tests",
-            "configurePreset": "tsan",
-            "targets": [
-                "gtests_dbms"
-            ]
-        },
-        {
-            "name": "tsan-all",
-            "displayName": "Build all Thread Sanitizer tests",
-            "configurePreset": "tsan",
-            "targets": [
-                "gtests_dbms",
-                "gtests_libdaemon",
-                "gtests_libcommon"
-            ]
-        },
-        {
-            "name": "benchmarks",
-            "displayName": "Build benchmarks",
-            "configurePreset": "benchmarks",
-            "targets": [
-                "bench_dbms"
-            ]
-        }
-    ],
-    "workflowPresets": [
-        {
-            "name": "dev",
-            "displayName": "Build debug binary workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "dev"
-                },
-                {
-                    "type": "build",
-                    "name": "dev"
-                }
-            ]
-        },
-        {
-            "name": "unit-tests",
-            "displayName": "Build dbms unit tests workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "dev"
-                },
-                {
-                    "type": "build",
-                    "name": "unit-tests"
-                }
-            ]
-        },
-        {
-            "name": "unit-tests-all",
-            "displayName": "Build all unit tests workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "dev"
-                },
-                {
-                    "type": "build",
-                    "name": "unit-tests-all"
-                }
-            ]
-        },
-        {
-            "name": "benchmarks",
-            "displayName": "Build benchmarks workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "benchmarks"
-                },
-                {
-                    "type": "build",
-                    "name": "benchmarks"
-                }
-            ]
-        },
-        {
-            "name": "asan-tests",
-            "displayName": "Build dbms Address Sanitizer tests workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "asan"
-                },
-                {
-                    "type": "build",
-                    "name": "asan"
-                }
-            ]
-        },
-        {
-            "name": "asan-tests-all",
-            "displayName": "Build all Address Sanitizer tests workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "asan"
-                },
-                {
-                    "type": "build",
-                    "name": "asan-all"
-                }
-            ]
-        },
-        {
-            "name": "tsan-tests",
-            "displayName": "Build dbms Thread Sanitizer tests workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "tsan"
-                },
-                {
-                    "type": "build",
-                    "name": "tsan"
-                }
-            ]
-        },
-        {
-            "name": "tsan-tests-all",
-            "displayName": "Build all Thread Sanitizer tests workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "tsan"
-                },
-                {
-                    "type": "build",
-                    "name": "tsan-all"
-                }
-            ]
-        },
-        {
-            "name": "release",
-            "displayName": "Build release binary workflow",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "release"
-                },
-                {
-                    "type": "build",
-                    "name": "release"
-                }
-            ]
-        }
-    ]
+    { "name": "base-debug", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" } },
+    { "name": "base-release", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
+    { "name": "base-relwithdebinfo", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" } },
+
+    { "name": "msvc", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_C_COMPILER": "cl.exe", "CMAKE_CXX_COMPILER": "cl.exe", "CMAKE_GENERATOR_PLATFORM": "x64" } },
+    { "name": "gcc", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_C_COMPILER": "/usr/bin/gcc", "CMAKE_CXX_COMPILER": "/usr/bin/g++" } },
+    { "name": "clang", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_C_COMPILER": "/usr/bin/clang", "CMAKE_CXX_COMPILER": "/usr/bin/clang++" } },
+
+    { "name": "base-asan", "inherits": "base-debug", "hidden": true, "cacheVariables": { "ENABLE_ASAN": "ON" } },
+    { "name": "base-tsan", "inherits": "base-debug", "hidden": true, "cacheVariables": { "ENABLE_TSAN": "ON" } },
+
+    { "name": "tests-on", "hidden": true, "cacheVariables": { "ENABLE_TESTS": "ON" } },
+    { "name": "tests-off", "hidden": true, "cacheVariables": { "ENABLE_TESTS": "OFF" } },
+
+    { "name": "benchmarks-on", "hidden": true, "cacheVariables": { "ENABLE_BENCHMARKS": "ON" } },
+    { "name": "benchmarks-off", "hidden": true, "cacheVariables": { "ENABLE_BENCHMARKS": "OFF" } },
+
+    { "name": "analysis", "inherits": ["base-relwithdebinfo"], "displayName": "Analysis Build (Clang-Tidy)", "cacheVariables": { "ENABLE_CLANG_TIDY": "ON", "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" } },
+
+    { "name": "dev-msvc", "inherits": ["base-debug", "msvc", "tests-on"], "displayName": "MSVC Debug Dev Build", "binaryDir": "${sourceDir}/cmake-build-msvc-debug" },
+    { "name": "dev-gcc", "inherits": ["base-debug", "gcc", "tests-on"], "displayName": "GCC Debug Dev Build", "binaryDir": "${sourceDir}/cmake-build-gcc-debug" },
+    { "name": "dev-clang", "inherits": ["base-debug", "clang", "tests-on"], "displayName": "Clang Debug Dev Build", "binaryDir": "${sourceDir}/cmake-build-clang-debug" },
+
+    { "name": "release-msvc", "inherits": ["base-relwithdebinfo", "msvc", "tests-off"], "displayName": "MSVC Release Build", "binaryDir": "${sourceDir}/cmake-build-msvc-release" },
+    { "name": "release-gcc", "inherits": ["base-relwithdebinfo", "gcc", "tests-off"], "displayName": "GCC Release Build", "binaryDir": "${sourceDir}/cmake-build-gcc-release" },
+    { "name": "release-clang", "inherits": ["base-relwithdebinfo", "clang", "tests-off"], "displayName": "Clang Release Build", "binaryDir": "${sourceDir}/cmake-build-clang-release" },
+
+    { "name": "asan-msvc", "inherits": ["base-asan", "msvc", "tests-on"], "displayName": "MSVC ASAN Build", "binaryDir": "${sourceDir}/cmake-build-msvc-asan" },
+    { "name": "asan-gcc", "inherits": ["base-asan", "gcc", "tests-on"], "displayName": "GCC ASAN Build", "binaryDir": "${sourceDir}/cmake-build-gcc-asan" },
+    { "name": "asan-clang", "inherits": ["base-asan", "clang", "tests-on"], "displayName": "Clang ASAN Build", "binaryDir": "${sourceDir}/cmake-build-clang-asan" },
+
+    { "name": "tsan-msvc", "inherits": ["base-tsan", "msvc", "tests-on"], "displayName": "MSVC TSAN Build", "binaryDir": "${sourceDir}/cmake-build-msvc-tsan" },
+    { "name": "tsan-gcc", "inherits": ["base-tsan", "gcc", "tests-on"], "displayName": "GCC TSAN Build", "binaryDir": "${sourceDir}/cmake-build-gcc-tsan" },
+    { "name": "tsan-clang", "inherits": ["base-tsan", "clang", "tests-on"], "displayName": "Clang TSAN Build", "binaryDir": "${sourceDir}/cmake-build-clang-tsan" },
+
+    { "name": "bench-msvc", "inherits": ["base-relwithdebinfo", "msvc", "benchmarks-on"], "displayName": "MSVC Benchmarks", "binaryDir": "${sourceDir}/cmake-build-msvc-benchmarks" },
+    { "name": "bench-gcc", "inherits": ["base-relwithdebinfo", "gcc", "benchmarks-on"], "displayName": "GCC Benchmarks", "binaryDir": "${sourceDir}/cmake-build-gcc-benchmarks" },
+    { "name": "bench-clang", "inherits": ["base-relwithdebinfo", "clang", "benchmarks-on"], "displayName": "Clang Benchmarks", "binaryDir": "${sourceDir}/cmake-build-clang-benchmarks" }
+  ],
+
+  "buildPresets": [
+    { "name": "dev-msvc", "configurePreset": "dev-msvc", "targets": ["app"], "jobs": 8 },
+    { "name": "dev-gcc", "configurePreset": "dev-gcc", "targets": ["app", "app_ut_tests"], "jobs": 8 },
+    { "name": "dev-clang", "configurePreset": "dev-clang", "targets": ["app"], "jobs": 8 },
+
+    { "name": "release-msvc", "configurePreset": "release-msvc", "targets": ["app"] },
+    { "name": "release-gcc", "configurePreset": "release-gcc", "targets": ["app"] },
+    { "name": "release-clang", "configurePreset": "release-clang", "targets": ["app"] },
+
+    { "name": "asan-msvc", "configurePreset": "asan-msvc", "targets": ["gtests_dbms"] },
+    { "name": "asan-gcc", "configurePreset": "asan-gcc", "targets": ["gtests_dbms"] },
+    { "name": "asan-clang", "configurePreset": "asan-clang", "targets": ["gtests_dbms"] },
+
+    { "name": "tsan-msvc", "configurePreset": "tsan-msvc", "targets": ["gtests_dbms"] },
+    { "name": "tsan-gcc", "configurePreset": "tsan-gcc", "targets": ["gtests_dbms"] },
+    { "name": "tsan-clang", "configurePreset": "tsan-clang", "targets": ["gtests_dbms"] },
+
+    { "name": "bench-msvc", "configurePreset": "bench-msvc", "targets": ["app_benchmarks"], "jobs": 8 },
+    { "name": "bench-gcc", "configurePreset": "bench-gcc", "targets": ["app_benchmarks"], "jobs": 8 },
+    { "name": "bench-clang", "configurePreset": "bench-clang", "targets": ["app_benchmarks"], "jobs": 8 },
+
+    { "name": "analysis", "configurePreset": "analysis", "targets": ["app"] }
+  ],
+
+  "workflowPresets": [
+    {
+      "name": "workflow-dev-msvc",
+      "displayName": "Dev workflow MSVC",
+      "steps": [
+        { "type": "configure", "name": "dev-msvc" },
+        { "type": "build", "name": "dev-msvc" }
+      ]
+    },
+    {
+      "name": "workflow-dev-gcc",
+      "displayName": "Dev workflow GCC",
+      "steps": [
+        { "type": "configure", "name": "dev-gcc" },
+        { "type": "build", "name": "dev-gcc" }
+      ]
+    },
+    {
+      "name": "workflow-dev-clang",
+      "displayName": "Dev workflow Clang",
+      "steps": [
+        { "type": "configure", "name": "dev-clang" },
+        { "type": "build", "name": "dev-clang" }
+      ]
+    },
+
+    {
+      "name": "workflow-release-msvc",
+      "displayName": "Release workflow MSVC",
+      "steps": [
+        { "type": "configure", "name": "release-msvc" },
+        { "type": "build", "name": "release-msvc" }
+      ]
+    },
+    {
+      "name": "workflow-release-gcc",
+      "displayName": "Release workflow GCC",
+      "steps": [
+        { "type": "configure", "name": "release-gcc" },
+        { "type": "build", "name": "release-gcc" }
+      ]
+    },
+    {
+      "name": "workflow-release-clang",
+      "displayName": "Release workflow Clang",
+      "steps": [
+        { "type": "configure", "name": "release-clang" },
+        { "type": "build", "name": "release-clang" }
+      ]
+    },
+
+    {
+      "name": "workflow-asan-msvc",
+      "displayName": "ASAN workflow MSVC",
+      "steps": [
+        { "type": "configure", "name": "asan-msvc" },
+        { "type": "build", "name": "asan-msvc" }
+      ]
+    },
+    {
+      "name": "workflow-asan-gcc",
+      "displayName": "ASAN workflow GCC",
+      "steps": [
+        { "type": "configure", "name": "asan-gcc" },
+        { "type": "build", "name": "asan-gcc" }
+      ]
+    },
+    {
+      "name": "workflow-asan-clang",
+      "displayName": "ASAN workflow Clang",
+      "steps": [
+        { "type": "configure", "name": "asan-clang" },
+        { "type": "build", "name": "asan-clang" }
+      ]
+    },
+
+    {
+      "name": "workflow-tsan-msvc",
+      "displayName": "TSAN workflow MSVC",
+      "steps": [
+        { "type": "configure", "name": "tsan-msvc" },
+        { "type": "build", "name": "tsan-msvc" }
+      ]
+    },
+    {
+      "name": "workflow-tsan-gcc",
+      "displayName": "TSAN workflow GCC",
+      "steps": [
+        { "type": "configure", "name": "tsan-gcc" },
+        { "type": "build", "name": "tsan-gcc" }
+      ]
+    },
+    {
+      "name": "workflow-tsan-clang",
+      "displayName": "TSAN workflow Clang",
+      "steps": [
+        { "type": "configure", "name": "tsan-clang" },
+        { "type": "build", "name": "tsan-clang" }
+      ]
+    },
+
+    {
+      "name": "workflow-bench-msvc",
+      "displayName": "Benchmarks workflow MSVC",
+      "steps": [
+        { "type": "configure", "name": "bench-msvc" },
+        { "type": "build", "name": "bench-msvc" }
+      ]
+    },
+    {
+      "name": "workflow-bench-gcc",
+      "displayName": "Benchmarks workflow GCC",
+      "steps": [
+        { "type": "configure", "name": "bench-gcc" },
+        { "type": "build", "name": "bench-gcc" }
+      ]
+    },
+    {
+      "name": "workflow-bench-clang",
+      "displayName": "Benchmarks workflow Clang",
+      "steps": [
+        { "type": "configure", "name": "bench-clang" },
+        { "type": "build", "name": "bench-clang" }
+      ]
+    },
+
+    {
+      "name": "workflow-analysis",
+      "displayName": "Analysis workflow",
+      "steps": [
+        { "type": "configure", "name": "analysis" },
+        { "type": "build", "name": "analysis" }
+      ]
+    }
+  ]
 }
