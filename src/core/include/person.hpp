@@ -1,3 +1,14 @@
+/**
+ * @file person.hpp
+ * @author Saikiran Nadipilli (saikirannadipilli@gmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2026-01-26
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
+
 #pragma once
 
 #include <iostream>
@@ -7,6 +18,10 @@
 static constexpr int GLOBAL_VALUE = 100;
 using t_my_int = int32_t;
 
+/**
+ * @brief
+ *
+ */
 class person
 {
 public:

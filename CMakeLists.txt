@@ -25,6 +25,8 @@ option(ENABLE_TESTS "Build unit tests" OFF)
 option(ENABLE_BENCHMARKS "Build benchmark targets" OFF)
 option(BUILD_DEBUG_MODE "Enable extra debug definitions" OFF)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # -------------------------------------------------
 # CMake modules
 # -------------------------------------------------
@@ -32,6 +34,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(CompilerDefinitions)
 include(CompilerWarnings)
+include(Sanitizers)
 include(BuildInfo)
 include(FastBuild)
 
@@ -44,14 +47,7 @@ if(BUILD_DEBUG_MODE)
   add_compile_definitions(DEBUG_BUILD)
 endif()
 
-# -------------------------------------------------
-# Subprojects
-# -------------------------------------------------
-add_subdirectory(core)
-
-if(ENABLE_APP)
-  add_subdirectory(app)
-endif()
+add_subdirectory(src)
 
 if(ENABLE_TESTS)
   include(CTest)
@@ -62,3 +58,6 @@ endif()
 if(ENABLE_BENCHMARKS)
   add_subdirectory(benchmarks)
 endif()
+
+# if(ENABLE_ASAN) enable_sanitizers(tests) enable_sanitizers(app)
+# enable_sanitizers(benchmarks) endif()

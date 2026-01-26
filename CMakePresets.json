@@ -10,7 +10,8 @@
       "name": "base",
       "hidden": true,
       "binaryDir": "${sourceDir}/build",
-      "generator": "Ninja"
+      "generator": "Ninja",
+      "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
     },
     { "name": "base-debug", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" } },
     { "name": "base-release", "inherits": "base", "hidden": true, "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
@@ -43,8 +44,6 @@
     { "name": "asan-gcc", "inherits": ["base-asan", "gcc", "tests-on"], "displayName": "GCC ASAN Build", "binaryDir": "${sourceDir}/cmake-build-gcc-asan" },
     { "name": "asan-clang", "inherits": ["base-asan", "clang", "tests-on"], "displayName": "Clang ASAN Build", "binaryDir": "${sourceDir}/cmake-build-clang-asan" },
 
-    { "name": "tsan-msvc", "inherits": ["base-tsan", "msvc", "tests-on"], "displayName": "MSVC TSAN Build", "binaryDir": "${sourceDir}/cmake-build-msvc-tsan" },
-    { "name": "tsan-gcc", "inherits": ["base-tsan", "gcc", "tests-on"], "displayName": "GCC TSAN Build", "binaryDir": "${sourceDir}/cmake-build-gcc-tsan" },
     { "name": "tsan-clang", "inherits": ["base-tsan", "clang", "tests-on"], "displayName": "Clang TSAN Build", "binaryDir": "${sourceDir}/cmake-build-clang-tsan" },
 
     { "name": "bench-msvc", "inherits": ["base-relwithdebinfo", "msvc", "benchmarks-on"], "displayName": "MSVC Benchmarks", "binaryDir": "${sourceDir}/cmake-build-msvc-benchmarks" },
@@ -61,13 +60,11 @@
     { "name": "release-gcc", "configurePreset": "release-gcc", "targets": ["app"] },
     { "name": "release-clang", "configurePreset": "release-clang", "targets": ["app"] },
 
-    { "name": "asan-msvc", "configurePreset": "asan-msvc", "targets": ["gtests_dbms"] },
-    { "name": "asan-gcc", "configurePreset": "asan-gcc", "targets": ["gtests_dbms"] },
-    { "name": "asan-clang", "configurePreset": "asan-clang", "targets": ["gtests_dbms"] },
+    { "name": "asan-msvc", "configurePreset": "asan-msvc", "targets": ["app"] },
+    { "name": "asan-gcc", "configurePreset": "asan-gcc", "targets": ["app"] },
+    { "name": "asan-clang", "configurePreset": "asan-clang", "targets": ["app"] },
 
-    { "name": "tsan-msvc", "configurePreset": "tsan-msvc", "targets": ["gtests_dbms"] },
-    { "name": "tsan-gcc", "configurePreset": "tsan-gcc", "targets": ["gtests_dbms"] },
-    { "name": "tsan-clang", "configurePreset": "tsan-clang", "targets": ["gtests_dbms"] },
+    { "name": "tsan-clang", "configurePreset": "tsan-clang", "targets": ["app"] },
 
     { "name": "bench-msvc", "configurePreset": "bench-msvc", "targets": ["app_benchmarks"], "jobs": 8 },
     { "name": "bench-gcc", "configurePreset": "bench-gcc", "targets": ["app_benchmarks"], "jobs": 8 },
