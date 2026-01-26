@@ -13,8 +13,4 @@ endif()
 print_target_build_info(${CMAKE_PROJECT_NAME})
 # enable_fast_build(${CMAKE_PROJECT_NAME})
 
-# if(ENABLE_ASAN) enable_sanitizers(app) endif()
-
-if(ENABLE_TSAN)
-  enable_sanitizers(app)
-endif()
+enable_sanitizers(app)
