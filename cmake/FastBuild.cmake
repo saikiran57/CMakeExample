@@ -1,53 +1,48 @@
 # ============================================================
-# FastBuild.cmake Build-speed optimizations (PCH, cache, unity, linker)
+# FastBuild.cmake — Cross-compiler build speed optimizations MSVC (Ninja/VS),
+# GCC, Clang
 # ============================================================
 
 include_guard(GLOBAL)
 
 # ------------------------------------------------------------
-# Options (Preset-controlled)
+# Options (preset-controlled)
 # ------------------------------------------------------------
 option(ENABLE_PCH "Enable precompiled headers" ON)
 option(ENABLE_UNITY_BUILD "Enable unity/jumbo builds" OFF)
 option(ENABLE_COMPILER_CACHE "Enable ccache/sccache" ON)
-option(ENABLE_FAST_LINKER "Use faster linker (lld)" ON)
-option(ENABLE_PARALLEL_COMPILE "Enable parallel compilation flags" ON)
+option(ENABLE_FAST_LINKER "Use faster linker when available" ON)
 option(ENABLE_INCREMENTAL_LINK "Enable incremental linking (MSVC)" ON)
+option(ENABLE_PARALLEL_COMPILE "Enable compiler parallelism flags" ON)
 
 # ------------------------------------------------------------
-# Compiler cache
+# Compiler cache (prefer sccache on Windows)
 # ------------------------------------------------------------
 if(ENABLE_COMPILER_CACHE)
-  find_program(CCACHE_PROGRAM ccache)
   find_program(SCCACHE_PROGRAM sccache)
+  find_program(CCACHE_PROGRAM ccache)
 
-  if(CCACHE_PROGRAM)
-    message(STATUS "FastBuild: Using ccache")
-    set(CMAKE_C_COMPILER_LAUNCHER ccache)
-    set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
-  elseif(SCCACHE_PROGRAM)
+  if(SCCACHE_PROGRAM)
     message(STATUS "FastBuild: Using sccache")
     set(CMAKE_C_COMPILER_LAUNCHER sccache)
     set(CMAKE_CXX_COMPILER_LAUNCHER sccache)
+  elseif(CCACHE_PROGRAM)
+    message(STATUS "FastBuild: Using ccache")
+    set(CMAKE_C_COMPILER_LAUNCHER ccache)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
   endif()
 endif()
 
 # ------------------------------------------------------------
-# Fast linker
+# Fast linker (GCC / Clang only)
 # ------------------------------------------------------------
 if(ENABLE_FAST_LINKER AND NOT MSVC)
   include(CheckLinkerFlag)
   check_linker_flag(CXX "-fuse-ld=lld" HAS_LLD)
+
   if(HAS_LLD)
     add_link_options(-fuse-ld=lld)
   endif()
-endif()
-
-# ------------------------------------------------------------
-# Parallel compilation
-# ------------------------------------------------------------
-if(ENABLE_PARALLEL_COMPILE AND MSVC)
-  add_compile_options(/MP)
 endif()
 
 # ------------------------------------------------------------
@@ -59,48 +54,75 @@ function(enable_fast_build target)
   endif()
 
   # --------------------------------------------------------
-  # Precompiled Header (pch.hpp)
+  # Precompiled headers (attach once, per-target)
   # --------------------------------------------------------
   if(ENABLE_PCH)
-    set(PCH_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/include/pch.hpp")
+    get_target_property(_existing_pch ${target} PRECOMPILE_HEADERS)
 
-    if(NOT EXISTS "${PCH_HEADER}")
-      message(
-        FATAL_ERROR
-          "FastBuild: ENABLE_PCH is ON but pch.hpp not found at:\n  ${PCH_HEADER}"
-      )
-    endif()
+    if(NOT _existing_pch)
+      get_target_property(_incs ${target} INCLUDE_DIRECTORIES)
+      list(LENGTH _incs _inc_count)
 
-    message(STATUS "FastBuild: Using PCH for ${target}: ${PCH_HEADER}")
+      if(_inc_count GREATER 0)
+        list(GET _incs 0 _primary_inc)
+        set(PCH_HEADER "${_primary_inc}/pch.hpp")
 
-    target_precompile_headers(${target} PRIVATE "${PCH_HEADER}")
+        if(EXISTS "${PCH_HEADER}")
+          message(STATUS "FastBuild: Using PCH for ${target}: ${PCH_HEADER}")
+          target_precompile_headers(${target} PRIVATE "${PCH_HEADER}")
 
-    # Detect broken PCH usage
-    if(NOT MSVC)
-      target_compile_options(${target} PRIVATE -Winvalid-pch)
+          if(NOT MSVC)
+            target_compile_options(${target} PRIVATE -Winvalid-pch)
+          endif()
+        endif()
+      endif()
     endif()
   endif()
 
   # --------------------------------------------------------
-  # Unity builds (CI-friendly)
+  # MSVC (Ninja or VS)
+  # --------------------------------------------------------
+  if(MSVC)
+    if(CMAKE_GENERATOR MATCHES "Ninja")
+      # Use FS, Gy, Gw, /Z7 but skip /MP
+      target_compile_options(${target} PRIVATE /FS /Gy /Gw
+                                               $<$<CONFIG:Debug>:/Z7>)
+    else()
+      # MSBuild /VS: use /MP
+      target_compile_options(${target} PRIVATE /MP /FS /Gy /Gw
+                                               $<$<CONFIG:Debug>:/Z7>)
+    endif()
+
+    # Incremental linking (Debug-ish only)
+    if(ENABLE_INCREMENTAL_LINK)
+      target_link_options(${target} PRIVATE $<$<CONFIG:Debug>:/INCREMENTAL>
+                          $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL>)
+    endif()
+  endif()
+
+  # --------------------------------------------------------
+  # GCC
+  # --------------------------------------------------------
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(ENABLE_PARALLEL_COMPILE)
+      target_compile_options(${target} PRIVATE -pipe)
+    endif()
+  endif()
+
+  # --------------------------------------------------------
+  # Clang
+  # --------------------------------------------------------
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    if(ENABLE_PARALLEL_COMPILE)
+      target_compile_options(${target} PRIVATE -pipe)
+    endif()
+  endif()
+
+  # --------------------------------------------------------
+  # Unity builds (opt-in)
   # --------------------------------------------------------
   if(ENABLE_UNITY_BUILD)
     set_target_properties(${target} PROPERTIES UNITY_BUILD ON
                                                UNITY_BUILD_BATCH_SIZE 8)
   endif()
-
-  # --------------------------------------------------------
-  # Incremental linking
-  # --------------------------------------------------------
-  if(ENABLE_INCREMENTAL_LINK AND MSVC)
-    target_link_options(${target} PRIVATE /INCREMENTAL)
-  endif()
-
-  # --------------------------------------------------------
-  # Compiler speed flags
-  # --------------------------------------------------------
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    target_compile_options(${target} PRIVATE -pipe -fno-omit-frame-pointer)
-  endif()
-
 endfunction()

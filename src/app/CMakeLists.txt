@@ -8,9 +8,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE core)
 
 if(ENABLE_WARNINGS)
   enable_project_warnings(${CMAKE_PROJECT_NAME})
+  enable_project_runtime(${CMAKE_PROJECT_NAME})
 endif()
 
+enable_sanitizers(${CMAKE_PROJECT_NAME})
 print_target_build_info(${CMAKE_PROJECT_NAME})
-# enable_fast_build(${CMAKE_PROJECT_NAME})
-
-enable_sanitizers(app)

@@ -43,16 +43,25 @@
       "name": "msvc",
       "inherits": "base",
       "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe",
-        "CMAKE_GENERATOR_PLATFORM": "x64"
+        "CMAKE_CXX_COMPILER": "cl.exe"
       }
     },
     {
       "name": "gcc",
       "inherits": "base",
       "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
       "cacheVariables": {
         "CMAKE_C_COMPILER": "/usr/bin/gcc",
         "CMAKE_CXX_COMPILER": "/usr/bin/g++"
@@ -62,6 +71,11 @@
       "name": "clang",
       "inherits": "base",
       "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
       "cacheVariables": {
         "CMAKE_C_COMPILER": "/usr/bin/clang",
         "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
@@ -113,10 +127,13 @@
     },
     {
       "name": "analysis",
-      "inherits": [
-        "base-relwithdebinfo"
-      ],
+      "inherits": ["base-relwithdebinfo"],
       "displayName": "Analysis Build (Clang-Tidy)",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
       "cacheVariables": {
         "ENABLE_CLANG_TIDY": "ON",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
@@ -124,131 +141,79 @@
     },
     {
       "name": "dev-msvc",
-      "inherits": [
-        "base-debug",
-        "msvc",
-        "tests-on"
-      ],
+      "inherits": ["base-debug", "msvc", "tests-on"],
       "displayName": "MSVC Debug Dev Build",
       "binaryDir": "${sourceDir}/build-msvc-debug"
     },
     {
       "name": "dev-gcc",
-      "inherits": [
-        "base-debug",
-        "gcc",
-        "tests-on"
-      ],
+      "inherits": ["base-debug", "gcc", "tests-on"],
       "displayName": "GCC Debug Dev Build",
       "binaryDir": "${sourceDir}/build-gcc-debug"
     },
     {
       "name": "dev-clang",
-      "inherits": [
-        "base-debug",
-        "clang",
-        "tests-on"
-      ],
+      "inherits": ["base-debug", "clang", "tests-on"],
       "displayName": "Clang Debug Dev Build",
       "binaryDir": "${sourceDir}/build-clang-debug"
     },
     {
       "name": "release-msvc",
-      "inherits": [
-        "base-relwithdebinfo",
-        "msvc",
-        "tests-off"
-      ],
+      "inherits": ["base-relwithdebinfo", "msvc", "tests-off"],
       "displayName": "MSVC Release Build",
       "binaryDir": "${sourceDir}/build-msvc-release"
     },
     {
       "name": "release-gcc",
-      "inherits": [
-        "base-relwithdebinfo",
-        "gcc",
-        "tests-off"
-      ],
+      "inherits": ["base-relwithdebinfo", "gcc", "tests-off"],
       "displayName": "GCC Release Build",
       "binaryDir": "${sourceDir}/build-gcc-release"
     },
     {
       "name": "release-clang",
-      "inherits": [
-        "base-relwithdebinfo",
-        "clang",
-        "tests-off"
-      ],
+      "inherits": ["base-relwithdebinfo", "clang", "tests-off"],
       "displayName": "Clang Release Build",
       "binaryDir": "${sourceDir}/build-clang-release"
     },
     {
       "name": "asan-msvc",
-      "inherits": [
-        "base-asan",
-        "msvc",
-        "tests-on"
-      ],
+      "inherits": ["base-asan", "msvc", "tests-on"],
       "displayName": "MSVC ASAN Build",
       "binaryDir": "${sourceDir}/build-msvc-asan"
     },
     {
       "name": "asan-gcc",
-      "inherits": [
-        "base-asan",
-        "gcc",
-        "tests-on"
-      ],
+      "inherits": ["base-asan", "gcc", "tests-on"],
       "displayName": "GCC ASAN Build",
       "binaryDir": "${sourceDir}/build-gcc-asan"
     },
     {
       "name": "asan-clang",
-      "inherits": [
-        "base-asan",
-        "clang",
-        "tests-on"
-      ],
+      "inherits": ["base-asan", "clang", "tests-on"],
       "displayName": "Clang ASAN Build",
       "binaryDir": "${sourceDir}/build-clang-asan"
     },
     {
       "name": "tsan-clang",
-      "inherits": [
-        "base-tsan",
-        "clang",
-        "tests-on"
-      ],
+      "inherits": ["base-tsan", "clang", "tests-on"],
       "displayName": "Clang TSAN Build",
       "binaryDir": "${sourceDir}/build-clang-tsan"
     },
     {
       "name": "bench-msvc",
-      "inherits": [
-        "base-relwithdebinfo",
-        "msvc",
-        "benchmarks-on"
-      ],
+      "inherits": ["base-relwithdebinfo", "msvc", "benchmarks-on"],
       "displayName": "MSVC Benchmarks",
       "binaryDir": "${sourceDir}/build-msvc-benchmarks"
     },
     {
       "name": "bench-gcc",
-      "inherits": [
-        "base-relwithdebinfo",
-        "gcc",
-        "benchmarks-on"
-      ],
+      "inherits": ["base-relwithdebinfo", "gcc", "benchmarks-on"],
       "displayName": "GCC Benchmarks",
       "binaryDir": "${sourceDir}/build-gcc-benchmarks"
     },
     {
       "name": "bench-clang",
-      "inherits": [
-        "base-relwithdebinfo",
-        "clang",
-        "benchmarks-on"
-      ],
+      "inherits": ["base-relwithdebinfo", "clang", "benchmarks-on"],
       "displayName": "Clang Benchmarks",
       "binaryDir": "${sourceDir}/build-clang-benchmarks"
     }
@@ -257,109 +222,86 @@
     {
       "name": "dev-msvc",
       "configurePreset": "dev-msvc",
-      "targets": [
-        "app",
-        "app_ut_tests"
-      ],
+      "targets": ["app", "app_ut_tests"],
       "jobs": 8
     },
     {
       "name": "dev-gcc",
       "configurePreset": "dev-gcc",
-      "targets": [
-        "app",
-        "app_ut_tests"
-      ],
+      "targets": ["app", "app_ut_tests"],
       "jobs": 8
     },
     {
       "name": "dev-clang",
       "configurePreset": "dev-clang",
-      "targets": [
-        "app",
-        "app_ut_tests"
-      ],
+      "targets": ["app", "app_ut_tests"],
       "jobs": 8
     },
     {
       "name": "release-msvc",
       "configurePreset": "release-msvc",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     },
     {
       "name": "release-gcc",
       "configurePreset": "release-gcc",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     },
     {
       "name": "release-clang",
       "configurePreset": "release-clang",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     },
     {
       "name": "asan-msvc",
       "configurePreset": "asan-msvc",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     },
     {
       "name": "asan-gcc",
       "configurePreset": "asan-gcc",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     },
     {
       "name": "asan-clang",
       "configurePreset": "asan-clang",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     },
     {
       "name": "tsan-clang",
       "configurePreset": "tsan-clang",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     },
     {
       "name": "bench-msvc",
       "configurePreset": "bench-msvc",
-      "targets": [
-        "app_benchmarks"
-      ],
+      "targets": ["app_benchmarks"],
       "jobs": 8
     },
     {
       "name": "bench-gcc",
       "configurePreset": "bench-gcc",
-      "targets": [
-        "app_benchmarks"
-      ],
+      "targets": ["app_benchmarks"],
       "jobs": 8
     },
     {
       "name": "bench-clang",
       "configurePreset": "bench-clang",
-      "targets": [
-        "app_benchmarks"
-      ],
+      "targets": ["app_benchmarks"],
       "jobs": 8
     },
     {
       "name": "analysis",
       "configurePreset": "analysis",
-      "targets": [
-        "app"
-      ]
+      "targets": ["app"],
+      "jobs": 8
     }
   ],
   "workflowPresets": [

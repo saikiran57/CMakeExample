@@ -23,6 +23,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE core benchmark::benchmark)
 target_compile_options(${PROJECT_NAME} PRIVATE -O3)
 
 # if(ENABLE_WARNINGS) enable_project_warnings(${PROJECT_NAME}) endif()
-
 print_target_build_info(${PROJECT_NAME})
-enable_fast_build(${PROJECT_NAME})
+
+# enable_fast_build(${PROJECT_NAME})

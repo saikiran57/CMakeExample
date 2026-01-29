@@ -13,7 +13,9 @@
 
 #include <iostream>
 #include <mutex>
-#include <unistd.h>
+// #define linux
+//     #include <unistd.h>
+// #endif
 
 static constexpr int GLOBAL_VALUE = 100;
 using t_my_int = int32_t;

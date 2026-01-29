@@ -3,24 +3,31 @@
 # -------------------------------------------------
 
 function(enable_project_warnings target)
-
   if(NOT TARGET ${target})
     message(FATAL_ERROR "Target ${target} does not exist")
   endif()
 
   # ===================== MSVC =====================
-  if(MSVC)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(
       ${target}
-      PRIVATE /W4 # High warning level (readable)
-              /permissive- # Standards conformance
-              /Zc:__cplusplus # Correct __cplusplus value
-              /Zc:preprocessor # Modern preprocessor
-              # Noise suppression
-              /wd4251 # DLL interface
-              /wd4275 # DLL inheritance
+      PRIVATE /W4
+              /permissive-
+              /Zc:__cplusplus
+              /Zc:preprocessor
+              /EHsc
+              # High-signal warnings
+              /w14263 # 'override' correctness
+              # Noise suppression (DLL boundaries)
+              /wd4251 # STL in exported classes
+              /wd4275 # DLL interface inheritance
               /wd4996 # Deprecated CRT
     )
+
+    # Security Development Lifecycle checks
+    if(ENABLE_SDL)
+      target_compile_options(${target} PRIVATE /sdl)
+    endif()
 
     if(ENABLE_WERROR)
       target_compile_options(${target} PRIVATE /WX)
@@ -33,14 +40,12 @@ function(enable_project_warnings target)
       PRIVATE -Wall
               -Wextra
               -Wpedantic
-              # High-signal warnings
               -Wconversion
               -Wsign-conversion
               -Wshadow
               -Wnull-dereference
               -Wdouble-promotion
               -Wformat=2
-              # Reduce noise
               -Wno-missing-field-initializers
               -Wno-unknown-pragmas)
 
@@ -55,7 +60,6 @@ function(enable_project_warnings target)
       PRIVATE -Wall
               -Wextra
               -Wpedantic
-              # High-signal warnings (clang excels here)
               -Wconversion
               -Wsign-conversion
               -Wshadow
@@ -63,7 +67,6 @@ function(enable_project_warnings target)
               -Wdouble-promotion
               -Wformat=2
               -Wimplicit-fallthrough
-              # Reduce clang-specific noise
               -Wno-unknown-warning-option
               -Wno-missing-field-initializers)
 
@@ -71,5 +74,4 @@ function(enable_project_warnings target)
       target_compile_options(${target} PRIVATE -Werror)
     endif()
   endif()
-
 endfunction()
