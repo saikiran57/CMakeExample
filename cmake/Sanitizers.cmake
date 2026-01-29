@@ -64,6 +64,9 @@ endfunction()
 
 # ---------------- Public API ----------------
 function(enable_sanitizers target)
+  if(NOT ENABLE_SANITIZERS)
+    return()
+  endif()
   _check_target(${target})
   _check_build_type_or_fail()
   _check_sanitizer_combos()
