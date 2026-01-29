@@ -45,13 +45,13 @@ repos:
       - id: cmake-format
       #- id: cmake-lint
 
-  # - repo: local
-  #   hooks:
-  #     - id: clang-tidy
-  #       name: clang-tidy
-  #       entry: run-clang-tidy -p build/ -j 8
-  #       language: system
-  #       files: \.(c|cc|cpp|cxx|h|hpp)$
+  - repo: local
+    hooks:
+      - id: clang-tidy
+        name: clang-tidy
+        entry: run-clang-tidy -p build/ -j 8
+        language: system
+        files: \.(c|cc|cpp|cxx|h|hpp)$
 
   - repo: https://github.com/cpp-linter/cpp-linter-hooks
     rev: v1.1.11

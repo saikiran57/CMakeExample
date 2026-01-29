@@ -1,16 +1,16 @@
 #include "person.hpp"
 #include <iostream>
 
-#define log_info(message) std::cout << "info:" << message << "\n";
-#define log_warn(message) std::cout << "warn:" << message << "\n";
-#define log_err(message) std::cout << "err:" << message << "\n";
+#define LOG_INFO(message) std::cout << "info:" << (message) << "\n";
+#define LOG_WARN(message) std::cout << "warn:" << (message) << "\n";
+#define LOG_ERR(message) std::cout << "err:" << (message) << "\n";
 
 int main()
 {
     person p1{.m_id = 1, .m_name = "Test"};
     person p2{.m_id = 1, .m_name = "Test"};
 
-    log_info("my first log");
+    LOG_INFO("my first log");
 
     std::cout << std::boolalpha << (p1 == p2) << "\n";
 
